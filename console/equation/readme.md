@@ -1,1 +1,1 @@
-
+![Screenshot](equation.png)
