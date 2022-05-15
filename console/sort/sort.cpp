@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
-//#include <sysinfoapi.h>
 
 int main()
 {
