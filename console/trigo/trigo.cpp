@@ -121,7 +121,7 @@ int main()
         printf("%c", HOR2);
     printf("%c\n", LRC);  
 
-    // para de mag-exit agad.
+    // para di mag-exit agad.
     printf("\n          Press any key to exit.\n");
     ch = _getch();
 }
