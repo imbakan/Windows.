@@ -6,9 +6,9 @@
 #include <conio.h>
 #include <string.h>
 
-#define EQN_COUNT    10
-#define EQN_LEN     100
-#define VAR_LEN      20
+const int EQN_COUNT = 10;
+const int EQN_LEN = 100;
+const int VAR_LEN = 20;
 
 bool IsNumber(char ch);
 bool IsAlpha(char ch);
@@ -96,6 +96,7 @@ bool IsAlpha(char ch)
 }
 
 // kunin ang numeric character sa string str simula sa index i
+// ilagay ang nakuha sa variable number
 void GetNumber(double* number, char* str, int* i)
 {
     int k, n;
@@ -120,6 +121,7 @@ void GetNumber(double* number, char* str, int* i)
 }
 
 // kunin ang alpha character sa string str simula sa index i
+// ilagay ang nakuha sa variable alpha
 void GetAlpha(char* alpha, char* str, int* i)
 {
     int k, n;
@@ -141,7 +143,8 @@ void GetAlpha(char* alpha, char* str, int* i)
 }
 
 
-// kolektahin ang mga variable na makikita sa equation str
+// kolektahin ang mga alpha character o variable na nakuha sa string str
+// ilagay sa array var ang mga nakuha
 void CollectVariable(char var[][VAR_LEN], char* str, int *k, int *n)
 {
     int j;
@@ -149,12 +152,15 @@ void CollectVariable(char var[][VAR_LEN], char* str, int *k, int *n)
 
     if (*n == 0)
     {
+        // kung ito ay ang unang nakuha
+        // ilagay 'to sa array var
         strcpy_s(var[*n], VAR_LEN, str);
         *k = *n;
         ++(*n);
     }
     else
     {
+        // kung hindi, alamin kung may kapareho
         found = false;
         
         for (j = 0;j<(*n);j++)
@@ -167,6 +173,8 @@ void CollectVariable(char var[][VAR_LEN], char* str, int *k, int *n)
             }
         }
 
+        // kung walang kapareho,
+        // ilagay 'to sa array var
         if (!found)
         {
             strcpy_s(var[*n], VAR_LEN, str);
@@ -183,7 +191,7 @@ void ParseEquation(char str[EQN_COUNT][EQN_LEN], char var[EQN_COUNT][VAR_LEN], d
     double num, sign, toogle, numfound;
     char v[VAR_LEN];
 
-    // i zero ang array
+    // i-zero ang two-dimensional array a
     n = count;
     m = n + 1;
     for (i = 0;i < n;i++)
@@ -192,7 +200,7 @@ void ParseEquation(char str[EQN_COUNT][EQN_LEN], char var[EQN_COUNT][VAR_LEN], d
 
     c = 0;
 
-    // isa isahin ang equation
+    // isa isahin ang equation str
     for (k = 0;k < n;k++)
     {
         i = 0;
@@ -200,13 +208,14 @@ void ParseEquation(char str[EQN_COUNT][EQN_LEN], char var[EQN_COUNT][VAR_LEN], d
         numfound = false;
         num = sign = toogle = 1.0;
 
-        // isa isahin ang character ng equation
+        // isa isahin ang character ng equation str
         while (i < l)
         {
             // kung ang character ay space, laktawan 'to
             if (str[k][i] == ' ') goto DITO;
 
-            // kung ang character ay equal at may number, ilagay ang number sa array
+            // kung ang character ay equal at may number na nakuha (numfound = true),
+            // ilagay ang number sa array a, tapos i-set ang numfound sa false
             if (str[k][i] == '=')
             {
                 if (numfound)
@@ -216,14 +225,15 @@ void ParseEquation(char str[EQN_COUNT][EQN_LEN], char var[EQN_COUNT][VAR_LEN], d
                     numfound = false;
                 }
 
-                // nasa kabilang side ng equation, baliktarin ang sign
+                // ito ay nasa kabilang side ng equation, baliktarin ang sign
                 toogle = -1.0;
 
-                // sign ng number
+                // iset sa plus sign
                 num = sign = 1.0;
             }
 
-            // kung ang character ay plus at may number, ilagay ang number sa array
+            // kung ang character ay plus at may number na nakuha (numfound = true),
+            // ilagay ang number sa array a, tapos i-set ang numfound sa false
             if (str[k][i] == '+')
             {
                 if (numfound)
@@ -233,11 +243,12 @@ void ParseEquation(char str[EQN_COUNT][EQN_LEN], char var[EQN_COUNT][VAR_LEN], d
                     numfound = false;
                 }
 
-                // sign ng number
+                // iset sa plus sign
                 num = sign = 1.0;
             }
 
-            // kung ang character ay minus at may number, ilagay ang number sa array
+            // kung ang character ay minus at may number na nakuha (numfound = true),
+            // ilagay ang number sa array a, tapos i-set ang numfound sa false
             if (str[k][i] == '-')
             {
                 if (numfound)
@@ -247,12 +258,13 @@ void ParseEquation(char str[EQN_COUNT][EQN_LEN], char var[EQN_COUNT][VAR_LEN], d
                     numfound = false;
                 }
 
-                // sign ng number
+                // iset sa minus sign
                 sign = -1.0;
                 num = 1.0;
             }
 
             // kung ang character ay number, kunin ang number
+            // i-set sa true ang numfound para malaman na may number na nakuha
             if (IsNumber(str[k][i]))
             {
                 GetNumber(&num, str[k], &i);
@@ -260,7 +272,9 @@ void ParseEquation(char str[EQN_COUNT][EQN_LEN], char var[EQN_COUNT][VAR_LEN], d
                 numfound = true;
             }
 
-            // kung ang character ay letter, kunin ang letter at ilagay ang letter at number sa array
+            // kung ang character ay letter, kunin ang letter
+            // ilagay ang letter sa array vat at ang number sa array a
+            // tapos i-set ang numfound sa false
             if (IsAlpha(str[k][i]))
             {
                 GetAlpha(v, str[k], &i);
@@ -277,7 +291,7 @@ void ParseEquation(char str[EQN_COUNT][EQN_LEN], char var[EQN_COUNT][VAR_LEN], d
             ++i;
         }
 
-        // kung may natitira pang number, ilagay to sa array
+        // kung may number pang nakuha (numfound = true), ilagay to sa array a
         if (numfound)
             a[k][n] = -toogle * sign * num;
     }
